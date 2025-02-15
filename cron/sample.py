@@ -9,6 +9,7 @@ from sklearn.multioutput import MultiOutputRegressor
 from xgboost import XGBRegressor
 import joblib
 from sklearn.metrics import mean_squared_error, mean_absolute_error
+import os
 
 # Fetch data from API
 url = "https://api.data.gov.in/resource/3b01bcb8-0b14-4abf-b6f2-c1bfd384ba69?api-key=579b464db66ec23bdd0000017efe3bfc6faf4ce178a67b58c069460e&format=csv&limit=600"
@@ -88,9 +89,15 @@ print('MSE:', mean_squared_error(y_test, y_pred))
 print('MAE:', mean_absolute_error(y_test, y_pred))
 
 # Save Model
-with open("air_quality_model.pkl", "wb") as f:
-    pickle.dump(best_xgb, f)
-print("Model trained, tuned, and saved successfully!")
+with open("cron/air_quality_model.pkl", "wb") as f:
+    pickle.dump(best_gbr, f)
+
+# Auto-commit the updated model
+os.system("git config --global user.email 'github-actions@github.com'")
+os.system("git config --global user.name 'GitHub Actions'")
+os.system("git add cron/air_quality_model.pkl")
+os.system("git commit -m 'Update air quality model'")
+os.system("git push origin main")  # Change "main" if using another branch
 
 # Save Scaler
 joblib.dump(sc, "scaler.pkl")
