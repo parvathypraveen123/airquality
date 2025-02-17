@@ -90,7 +90,7 @@ print('MAE:', mean_absolute_error(y_test, y_pred))
 
 # Save Model
 with open("cron/air_quality_model.pkl", "wb") as f:
-    pickle.dump(best_gbr, f)
+    pickle.dump(best_xgb, f)
 
 # Auto-commit the updated model
 os.system("git config --global user.email 'github-actions@github.com'")
