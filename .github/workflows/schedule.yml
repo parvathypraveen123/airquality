@@ -18,7 +18,7 @@ jobs:
           python-version: '3.10'  
 
       - name: Install Dependencies
-        run: pip install requests numpy pandas scikit-learn xgboost joblib schedule
+        run: pip install requests numpy pandas scikit-learn==1.6.1 xgboost joblib schedule
       - name: Run Python Script
         run: python cron/sample.py
       - name: Commit and push updated model
