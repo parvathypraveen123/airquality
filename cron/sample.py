@@ -100,4 +100,4 @@ os.system("git commit -m 'Update air quality model'")
 os.system("git push origin main")  # Change "main" if using another branch
 
 # Save Scaler
-joblib.dump(sc, "scaler.pkl")
+joblib.dump(sc, "cron/scaler.pkl")
