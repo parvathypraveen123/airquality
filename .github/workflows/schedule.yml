@@ -22,13 +22,19 @@ jobs:
 
       - name: Install Dependencies
         run: pip install requests numpy pandas scikit-learn==1.6.1 xgboost joblib schedule
+
       - name: Run Python Script
         run: python cron/sample.py
-      - name: Commit and push updated model
+
+      - name: Configure Git
         run: |
           git config --global user.email "github-actions@github.com"
           git config --global user.name "GitHub Actions"
-          git add airquality.pkl
+          git remote set-url origin https://x-access-token:${{ secrets.HUB_TOKEN }}@github.com/${{ github.repository }}.git
+
+      - name: Commit and push updated model
+        run: |
+          git add cron/air_quality_model.pkl
           git commit -m "Update air quality model"
           git push origin main
         env:
