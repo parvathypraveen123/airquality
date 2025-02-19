@@ -36,6 +36,8 @@ jobs:
         run: |
           git add Backend/air_quality_model.pkl
           git commit -m "Update air quality model"
+          git add Backend/scaler.pkl
+          git commit -m "Update scaler.pkl"
           git push origin main
         env:
           GITHUB_TOKEN: ${{ secrets.HUB_TOKEN }}
