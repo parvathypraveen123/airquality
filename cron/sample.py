@@ -96,7 +96,7 @@ try:
     # Auto-commit the updated model
     os.system("git config --global user.email 'github-actions@github.com'")
     os.system("git config --global user.name 'GitHub Actions'")
-    os.system("git add cron/air_quality_model.pkl")
+    os.system("git add Backend/air_quality_model.pkl")
     os.system("git commit -m 'Update air quality model'")
     os.system("git push origin main")  # Change "main" if using another branch
 
