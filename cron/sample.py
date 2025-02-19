@@ -90,7 +90,7 @@ try:
     print('MAE:', mean_absolute_error(y_test, y_pred))
 
     # Save Model
-    with open("cron/air_quality_model.pkl", "wb") as f:
+    with open("Backend/air_quality_model.pkl", "wb") as f:
         pickle.dump(best_xgb, f)
 
     # Auto-commit the updated model
@@ -101,7 +101,7 @@ try:
     os.system("git push origin main")  # Change "main" if using another branch
 
     # Save Scaler
-    joblib.dump(sc, "cron/scaler.pkl")
+    joblib.dump(sc, "Backend/scaler.pkl")
     
 except Exception as e:
     print(f"An error occurred: {e}")
