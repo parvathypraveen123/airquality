@@ -34,7 +34,7 @@ jobs:
 
       - name: Commit and push updated model
         run: |
-          git add cron/air_quality_model.pkl
+          git add Backend/air_quality_model.pkl
           git commit -m "Update air quality model"
           git push origin main
         env:
