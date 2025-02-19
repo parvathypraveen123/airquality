@@ -61,11 +61,13 @@ def predict():
     aqi_status = "Unhealthy" if avg_pollutant > 100 else "Satisfactory" if avg_pollutant >= 51 else "Healthy"
     
     return jsonify({
-        "Minimum Pollutant Level": predicted_df["Minimum Pollutant level"].iloc[0],
-        "Maximum Pollutant Level": predicted_df["Maximum Pollutant level"].iloc[0],
-        "Average Pollutant Level": avg_pollutant,
-        "AQI Status": aqi_status
-    })
+    "Minimum Pollutant Level": format(predicted_df["Minimum Pollutant level"].iloc[0], ".2f"),
+    "Maximum Pollutant Level": format(predicted_df["Maximum Pollutant level"].iloc[0], ".2f"),
+    "Average Pollutant Level": format(avg_pollutant, ".2f"),
+    "AQI Status": str(aqi_status)  # Ensure it's a string
+})
+
+
 
 if __name__ == "__main__":
     app.run(debug=True)
