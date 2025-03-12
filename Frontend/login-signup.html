@@ -6,89 +6,6 @@
     <title>Air Quality Prediction - Login & Sign Up</title>
     <link href="styles.css" rel="stylesheet">
     <style>
-        :root {
-            --primary-color: #3498db;
-            --secondary-color: #2ecc71;
-            --background-color: #f9f9f9;
-            --text-color: #333;
-            --shadow-color: rgba(0,0,0,0.1);
-        }
-
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            font-family: 'Arial', sans-serif;
-        }
-
-        body {
-            background-color: var(--background-color);
-            color: var(--text-color);
-            min-height: 100vh;
-            display: flex;
-            flex-direction: column;
-            overflow-x: hidden;
-        }
-
-        .particles-container {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            z-index: -1;
-            overflow: hidden;
-        }
-
-        .particle {
-            position: absolute;
-            border-radius: 50%;
-            opacity: 0.3;
-            animation: float 15s infinite linear;
-        }
-
-        @keyframes float {
-            0% {
-                transform: translateY(0) rotate(0deg);
-            }
-            100% {
-                transform: translateY(-100vh) rotate(360deg);
-            }
-        }
-
-        header {
-            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
-            color: white;
-            padding: 2rem;
-            text-align: center;
-            box-shadow: 0 2px 10px var(--shadow-color);
-        }
-
-        h1 {
-            font-size: 2.5rem;
-            margin-bottom: 1rem;
-            animation: fadeIn 1s ease-in-out;
-        }
-
-        .tagline {
-            font-size: 1.2rem;
-            opacity: 0.9;
-            max-width: 800px;
-            margin: 0 auto;
-            animation: fadeIn 1.5s ease-in-out;
-        }
-
-        main {
-            flex: 1;
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 3rem 2rem;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            animation: slideUp 1s ease-in-out;
-        }
-
         .auth-container {
             display: flex;
             width: 100%;
@@ -114,16 +31,6 @@
             box-shadow: 0 10px 30px var(--shadow-color);
         }
 
-        .form-group {
-            margin-bottom: 1.5rem;
-        }
-
-        label {
-            display: block;
-            margin-bottom: 0.5rem;
-            font-weight: 600;
-            color: #555;
-        }
 
         .input-field {
             width: 100%;
@@ -147,35 +54,10 @@
         }
 
         .btn {
-            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
-            color: white;
-            border: none;
-            padding: 12px 24px;
-            border-radius: 8px;
-            font-size: 1rem;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            box-shadow: 0 4px 6px rgba(52, 152, 219, 0.2);
             width: 100%;
             margin-top: 1rem;
         }
 
-        .btn i {
-            margin-right: 8px;
-        }
-
-        .btn:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 6px 12px rgba(52, 152, 219, 0.3);
-        }
-
-        .btn:active {
-            transform: translateY(0);
-        }
 
         .auth-toggle {
             text-align: center;
@@ -192,60 +74,6 @@
 
         .auth-toggle a:hover {
             color: var(--secondary-color);
-        }
-
-        .social-login {
-            margin-top: 2rem;
-            border-top: 1px solid #eee;
-            padding-top: 1.5rem;
-            text-align: center;
-        }
-
-        .social-login p {
-            margin-bottom: 1rem;
-            color: #666;
-        }
-
-        .social-buttons {
-            display: flex;
-            justify-content: center;
-            gap: 1rem;
-        }
-
-        .social-btn {
-            width: 45px;
-            height: 45px;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            border: 1px solid #ddd;
-            background-color: white;
-            transition: all 0.3s ease;
-            color: #555;
-            font-size: 1.2rem;
-            cursor: pointer;
-        }
-
-        .social-btn:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
-        }
-
-        .facebook {
-            color: #4267B2;
-        }
-
-        .google {
-            color: #DB4437;
-        }
-
-        .twitter {
-            color: #1DA1F2;
-        }
-
-        .linkedin {
-            color: #0077B5;
         }
 
         .divider {
@@ -301,31 +129,7 @@
             padding: 5px;
         }
 
-        .forgot-password {
-            text-align: right;
-            margin-top: 0.5rem;
-        }
-
-        .forgot-password a {
-            color: #777;
-            font-size: 0.85rem;
-            text-decoration: none;
-            transition: color 0.3s ease;
-        }
-
-        .forgot-password a:hover {
-            color: var(--primary-color);
-        }
-
-        .remember-me {
-            display: flex;
-            align-items: center;
-            margin-top: 1rem;
-        }
-
-        .remember-me input {
-            margin-right: 0.5rem;
-        }
+        
 
         .terms {
             font-size: 0.85rem;
@@ -380,23 +184,6 @@
 
         .footer-links a:hover {
             color: var(--secondary-color);
-        }
-
-        .social-icons {
-            display: flex;
-            margin-bottom: 1.5rem;
-        }
-
-        .social-icons a {
-            color: #fff;
-            margin: 0 10px;
-            font-size: 1.2rem;
-            transition: transform 0.3s ease, color 0.3s ease;
-        }
-
-        .social-icons a:hover {
-            color: var(--secondary-color);
-            transform: translateY(-3px);
         }
 
         @media (max-width: 768px) {
@@ -457,29 +244,14 @@
                             <input type="password" id="login-password" class="input-field" placeholder="Enter your password" required>
                             <i class="fas fa-eye"></i>
                         </div>
-                        <div class="forgot-password">
-                            <a href="#">Forgot Password?</a>
-                        </div>
                     </div>
-                    <div class="remember-me">
-                        <input type="checkbox" id="remember">
-                        <label for="remember">Remember me</label>
+                    <div class="terms">
+                        <p>By signing in, you agree to our <a href="#">Terms of Service</a> and <a href="#">Privacy Policy</a></p>
                     </div>
                     <button type="submit" class="btn">
                         <i class="fas fa-sign-in-alt"></i> Login
                     </button>
                 </form>
-
-                <div class="social-login">
-                    <div class="divider">OR</div>
-                    <p>Continue with social media</p>
-                    <div class="social-buttons">
-                        <a class="social-btn facebook"><i class="fab fa-facebook-f"></i></a>
-                        <a class="social-btn google"><i class="fab fa-google"></i></a>
-                        <a class="social-btn twitter"><i class="fab fa-twitter"></i></a>
-                        <a class="social-btn linkedin"><i class="fab fa-linkedin-in"></i></a>
-                    </div>
-                </div>
 
                 <div class="auth-toggle">
                     <p>Don't have an account? <a href="#" id="show-signup">Sign Up</a></p>
@@ -508,6 +280,4 @@
                             <i class="fas fa-eye"></i>
                         </div>
                     </div>
-                    <div class="form-group">
-                        <label for="confirm-password">Confirm Password</label>
-                        <div class="password-toggle">
+                    
