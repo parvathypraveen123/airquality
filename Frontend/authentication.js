@@ -70,7 +70,7 @@ signupForm.addEventListener("submit", (e) => {
     .then((userCredential) => {
       // Signed up successfully
       const user = userCredential.user;
-      console.log("Signup successful:", user);
+      console.log("Signup successful");
 
       // OPTIONAL: You can add user displayName here if you're using Firebase Firestore or updating the profile.
       alert("Signup successful! Please log in.");
