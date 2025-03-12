@@ -130,3 +130,33 @@ passwordToggles.forEach(toggle => {
   });
 });
 
+// Import Google Auth Provider
+import { GoogleAuthProvider, signInWithPopup } from "https://www.gstatic.com/firebasejs/11.4.0/firebase-auth.js";
+
+// Initialize Google Auth Provider
+const provider = new GoogleAuthProvider();
+
+// ============================
+// GOOGLE SIGN-IN FUNCTIONALITY
+// ============================
+const googleSigninBtn = document.getElementById("google-signin-btn");
+
+googleSigninBtn.addEventListener("click", (e) => {
+  e.preventDefault();
+
+  signInWithPopup(auth, provider)
+    .then((result) => {
+      const user = result.user;
+
+      console.log("Google Sign-In successful:", user);
+
+      alert(`Welcome, ${user.displayName || user.email}!`);
+
+      // Redirect to dashboard or another page
+      window.location.href = "dashboard.html";
+    })
+    .catch((error) => {
+      console.error("Google Sign-In error:", error);
+      alert(`Google Sign-In failed: ${error.message}`);
+    });
+});
