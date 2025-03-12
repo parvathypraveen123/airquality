@@ -28,6 +28,26 @@ pollutid = {
 model = joblib.load("air_quality_model.pkl")
 sc = joblib.load("scaler.pkl")
 
+def get_aqi_category(value):
+    """
+    Simplified AQI categorization:
+    Healthy: 0-50
+    Satisfactory: 51-100
+    Unhealthy: 101-200
+    Very Unhealthy: 201-300
+    Hazardous: >300
+    """
+    if value <= 50:
+        return "Healthy"
+    elif value <= 100:
+        return "Satisfactory"
+    elif value <= 200:
+        return "Unhealthy"
+    elif value <= 300:
+        return "Very Unhealthy"
+    else:
+        return "Hazardous"
+
 @app.route("/predict", methods=["POST"])
 def predict():
     data = request.json
@@ -56,18 +76,32 @@ def predict():
     prediction = model.predict(scaled_df).reshape(1, -1)
     att = ["Minimum Pollutant level", "Maximum Pollutant level", "Average Pollutant level"]
     predicted_df = pd.DataFrame(prediction, columns=att)
+
+    min_pollutant = predicted_df["Minimum Pollutant level"].iloc[0]
+    max_pollutant = predicted_df["Maximum Pollutant level"].iloc[0]
     avg_pollutant = predicted_df["Average Pollutant level"].iloc[0]
+
+    # Get AQI category for each level
+    min_status = get_aqi_category(min_pollutant)
+    max_status = get_aqi_category(max_pollutant)
+    avg_status = get_aqi_category(avg_pollutant)
+
+    # Determine overall status: prioritize the worst condition
+    status_priority = ["Healthy", "Satisfactory", "Unhealthy", "Very Unhealthy", "Hazardous"]
+    statuses = [min_status, max_status, avg_status]
     
-    aqi_status = "Unhealthy" if avg_pollutant > 100 else "Satisfactory" if avg_pollutant >= 51 else "Healthy"
-    
+    # Find the worst (highest index) category
+    worst_status = max(statuses, key=lambda x: status_priority.index(x))
+
     return jsonify({
-    "Minimum Pollutant Level": format(predicted_df["Minimum Pollutant level"].iloc[0], ".2f"),
-    "Maximum Pollutant Level": format(predicted_df["Maximum Pollutant level"].iloc[0], ".2f"),
-    "Average Pollutant Level": format(avg_pollutant, ".2f"),
-    "AQI Status": str(aqi_status)  # Ensure it's a string
-})
-
-
+        "Minimum Pollutant Level": format(min_pollutant, ".2f"),
+        "Maximum Pollutant Level": format(max_pollutant, ".2f"),
+        "Average Pollutant Level": format(avg_pollutant, ".2f"),
+        "Minimum Level AQI Status": min_status,
+        "Maximum Level AQI Status": max_status,
+        "Average Level AQI Status": avg_status,
+        "Overall AQI Status": worst_status
+    })
 
 if __name__ == "__main__":
     app.run(debug=True)
