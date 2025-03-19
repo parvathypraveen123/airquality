@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Air Quality Prediction</title>
     <link href="styles.css" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
 </head>
 <body>
     <div class="particles-container" id="particles-container"></div>
@@ -51,23 +52,35 @@
         <div class="result-section" id="result-section">
             <h2>Your Prediction Result</h2>
             <div class="result-card">
+        
                 <p>Air Quality Index for <span id="location-display">selected location</span>:</p>
-                <div class="aqi-value" id="aqi-value">45</div>
+        
+                <!-- AQI Values -->
+                <div class="aqi-values">
+                    <p>Minimum AQI: <span class="aqi-value" id="min-aqi">-</span> <small>(<span id="min-status">-</span>)</small></p>
+                    <p>Maximum AQI: <span class="aqi-value" id="max-aqi">-</span> <small>(<span id="max-status">-</span>)</small></p>
+                    <p>Average AQI: <span class="aqi-value" id="avg-aqi">-</span> <small>(<span id="avg-status">-</span>)</small></p>
+                </div>
+        
+                <!-- Description for Average AQI -->
                 <p class="aqi-description" id="aqi-description">Good - Air quality is satisfactory, and air pollution poses little or no risk.</p>
                 
+                <!-- Scale Bar -->
                 <div class="scale-container">
                     <div class="scale-marker" id="scale-marker"></div>
                 </div>
                 
+                <!-- Recommendations -->
                 <div class="recommendation-section">
                     <p class="recommendation-title">Recommendations:</p>
                     <ul id="recommendations">
                         <li>You can enjoy outdoor activities.</li>
-                        <li>Air quality is ideal for most individuals, but some unusually sensitive people should consider reducing prolonged outdoor exertion.</li>
                     </ul>
                 </div>
+                
             </div>
         </div>
+        
 
         <div class="info-card">
             <h2 class="info-title">Understanding Air Pollutants</h2>

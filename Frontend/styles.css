@@ -367,3 +367,12 @@ footer {
         color: #999;
     }
 }
+.aqi-values p {
+    font-size: 1.2rem;
+    margin-bottom: 0.5rem;
+}
+
+.aqi-values .aqi-value {
+    font-weight: bold;
+    color: var(--primary-color);
+}
