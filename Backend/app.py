@@ -3,8 +3,10 @@ from geopy.geocoders import Nominatim
 import numpy as np
 import pandas as pd
 import joblib
+from flask_cors import CORS
 
 app = Flask(__name__)
+CORS(app)  # Allow all origins
 
 def get_lat_lon_if_india(location):
     geolocator = Nominatim(user_agent="geo_locator")
