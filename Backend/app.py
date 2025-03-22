@@ -58,6 +58,9 @@ def get_aqi_category(value):
 @app.route("/predict", methods=["POST", "OPTIONS"])
 #@app.route("/predict", methods=["POST"])
 def predict():
+    data = request.json
+    print("Received Data:", data)  # Debugging Line
+    return jsonify({"message": "Data received"}), 200
     if request.method == "OPTIONS":
         # Handle the preflight request
         response = jsonify({'message': 'CORS preflight passed'})
