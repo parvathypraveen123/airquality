@@ -51,8 +51,11 @@ def get_aqi_category(value):
     else:
         return "Hazardous"
 
-@app.route("/predict", methods=["POST"])
+@app.route("/predict", methods=["POST","OPTIONS"])
 def predict():
+    if request.method == "OPTIONS":
+    # Allow CORS preflight response
+        return '', 200
     data = request.json
     location = data.get("location")
     pollut = data.get("pollutant").strip().upper()
