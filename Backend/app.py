@@ -53,9 +53,13 @@ def get_aqi_category(value):
 
 @app.route("/predict", methods=["POST","OPTIONS"])
 def predict():
-    if request.method == "OPTIONS":
-    # Allow CORS preflight response
-        return '', 200
+    if request.method == 'OPTIONS':
+        # CORS preflight response
+        response = jsonify({'message': 'CORS preflight'})
+        response.headers.add("Access-Control-Allow-Origin", "*")
+        response.headers.add("Access-Control-Allow-Headers", "Content-Type")
+        response.headers.add("Access-Control-Allow-Methods", "POST, OPTIONS")
+        return response, 200
     data = request.json
     location = data.get("location")
     pollut = data.get("pollutant").strip().upper()
