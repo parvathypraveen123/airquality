@@ -7,7 +7,9 @@ from flask_cors import CORS
 import warnings
 
 app = Flask(__name__)
-CORS(app)  # Allow all origins
+CORS(app, resources={r"/*": {"origins": "*"}})  # <-- You can limit to localhost in production
+#CORS(app)  # Allow all origins
+warnings.filterwarnings("ignore")
 
 def get_lat_lon_if_india(location):
     geolocator = Nominatim(user_agent="geo_locator")
@@ -51,8 +53,17 @@ def get_aqi_category(value):
     else:
         return "Hazardous"
 
-@app.route("/predict", methods=["POST"])
+@app.route("/predict", methods=["POST", "OPTIONS"])
+#@app.route("/predict", methods=["POST"])
 def predict():
+    if request.method == "OPTIONS":
+        # Handle the preflight request
+        response = jsonify({'message': 'CORS preflight passed'})
+        response.headers.add("Access-Control-Allow-Origin", "*")  # <-- You can lock to your frontend URL
+        response.headers.add("Access-Control-Allow-Headers", "Content-Type,Authorization")
+        response.headers.add("Access-Control-Allow-Methods", "POST,OPTIONS")
+        return response, 200
+    # Main POST request handler
     data = request.json
     location = data.get("location")
     pollut = data.get("pollutant").strip().upper()
@@ -105,8 +116,17 @@ def predict():
         "Average Level AQI Status": avg_status,
         "Overall AQI Status": worst_status
     })
+# Add CORS headers again just in case
+    response.headers.add("Access-Control-Allow-Origin", "*")
+    return response, 200
+
+# Optional: root health check
+@app.route("/", methods=["GET"])
+def home():
+    return jsonify({"message": "Air Quality Prediction API is live!"})
+
 
 if __name__ == "__main__":
-    app.run(debug=True, host="0.0.0.0", port=5000)  
+    app.run(debug=True)  
 
 warnings.filterwarnings("ignore")

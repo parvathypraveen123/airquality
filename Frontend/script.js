@@ -61,7 +61,8 @@ document.getElementById('prediction-form').addEventListener('submit', function(e
 
     const mappedPollutant = pollutantMapping[pollutant.toLowerCase()];
 
-    fetch('http://127.0.0.1:5000/predict', {
+    //fetch('http://127.0.0.1:5000/predict', {
+    fetch('https://airquality-2.onrender.com/predict', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
