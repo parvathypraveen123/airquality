@@ -7,7 +7,7 @@ from flask_cors import CORS
 import warnings
 
 app = Flask(__name__)
-CORS(app, resources={r"/*": {"origins": "*"}})
+CORS(app, resources={r"/*": {"origins": "http://127.0.0.1:5500"}})
 
 def get_lat_lon_if_india(location):
     geolocator = Nominatim(user_agent="geo_locator")
