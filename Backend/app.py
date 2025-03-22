@@ -66,8 +66,9 @@ def predict():
     # Main POST request handler
     data = request.json
     location = data.get("location")
-    pollut = data.get("pollutant").strip().upper()
-    
+    #pollut = data.get("pollutant").strip().upper()
+    pollut = data.get("pollutant", "").strip().upper()
+
     coordinates = get_lat_lon_if_india(location)
     if not coordinates:
         return jsonify({"error": "Location not found in India"}), 400
@@ -87,7 +88,7 @@ def predict():
     scaled_df["pollutant_id"] = sample_test_df["pollutant_id"].values
     
     # Predict AQI levels
-    prediction = model.predict(scaled_df).reshape(1, -1)
+    prediction = model.predict(scaled_df)#.reshape(1, -1)
     att = ["Minimum Pollutant level", "Maximum Pollutant level", "Average Pollutant level"]
     predicted_df = pd.DataFrame(prediction, columns=att)
 
@@ -101,11 +102,13 @@ def predict():
     avg_status = get_aqi_category(avg_pollutant)
 
     # Determine overall status: prioritize the worst condition
-    status_priority = ["Healthy", "Satisfactory", "Unhealthy", "Very Unhealthy", "Hazardous"]
-    statuses = [min_status, max_status, avg_status]
+    #status_priority = ["Healthy", "Satisfactory", "Unhealthy", "Very Unhealthy", "Hazardous"]
+    #statuses = [min_status, max_status, avg_status]
     
     # Find the worst (highest index) category
-    worst_status = max(statuses, key=lambda x: status_priority.index(x))
+    #worst_status = max(statuses, key=lambda x: status_priority.index(x))
+    status_priority = {"Healthy": 0, "Satisfactory": 1, "Unhealthy": 2, "Very Unhealthy": 3, "Hazardous": 4}
+    worst_status = max([min_status, max_status, avg_status], key=lambda s: status_priority[s])
 
     return jsonify({
         "Minimum Pollutant Level": format(min_pollutant, ".2f"),
@@ -117,8 +120,8 @@ def predict():
         "Overall AQI Status": worst_status
     })
 # Add CORS headers again just in case
-    response.headers.add("Access-Control-Allow-Origin", "*")
-    return response, 200
+    #response.headers.add("Access-Control-Allow-Origin", "*")
+    #return response, 200
 
 # Optional: root health check
 @app.route("/", methods=["GET"])
