@@ -7,7 +7,7 @@ from flask_cors import CORS
 import warnings
 
 app = Flask(__name__)
-CORS(app)  # Allow all origins
+CORS(app, resources={r"/*": {"origins": "*"}})
 
 def get_lat_lon_if_india(location):
     geolocator = Nominatim(user_agent="geo_locator")
