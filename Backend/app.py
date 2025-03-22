@@ -60,7 +60,10 @@ def get_aqi_category(value):
 def predict():
     data = request.json
     print("Received Data:", data)  # Debugging Line
-    return jsonify({"message": "Data received"}), 200
+    data = request.json
+    location = data.get("location")
+    pollut = data.get("pollutant", "").strip().upper()
+
     if request.method == "OPTIONS":
         # Handle the preflight request
         response = jsonify({'message': 'CORS preflight passed'})
@@ -69,11 +72,9 @@ def predict():
         response.headers.add("Access-Control-Allow-Methods", "POST,OPTIONS")
         return response, 200
     # Main POST request handler
-    data = request.json
-    location = data.get("location")
+    
     #pollut = data.get("pollutant").strip().upper()
-    pollut = data.get("pollutant", "").strip().upper()
-
+    
     coordinates = get_lat_lon_if_india(location)
     if not coordinates:
         return jsonify({"error": "Location not found in India"}), 400
