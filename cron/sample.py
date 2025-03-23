@@ -13,7 +13,7 @@ import os
 
 try:
     # Fetch data from API
-    url = "https://api.data.gov.in/resource/3b01bcb8-0b14-4abf-b6f2-c1bfd384ba69?api-key=579b464db66ec23bdd0000017efe3bfc6faf4ce178a67b58c069460e&format=csv&limit=600"
+    url = "https://api.data.gov.in/resource/3b01bcb8-0b14-4abf-b6f2-c1bfd384ba69?api-key=579b464db66ec23bdd0000017efe3bfc6faf4ce178a67b58c069460e&format=csv&limit=1000"
     headers = {"Authorization": "Bearer 579b464db66ec23bdd0000017efe3bfc6faf4ce178a67b58c069460e"}
 
     response = requests.get(url, headers=headers)
