@@ -9,8 +9,13 @@ import os
 
 
 app = Flask(__name__)
-#CORS(app, resources={r"/*": {"origins": "*"}})  # <-- You can limit to localhost in production
-CORS(app, resources={r"/*": {"origins": "https://www.airscapes.me"}})
+CORS(app, resources={r"/*": {"origins": ["https://www.airscapes.me", "https://airscapes.me"]}}, supports_credentials=True)
+
+def after_request(response):
+    response.headers.add("Access-Control-Allow-Origin", "*")
+    response.headers.add("Access-Control-Allow-Headers", "Content-Type, Authorization")
+    response.headers.add("Access-Control-Allow-Methods", "GET, POST, OPTIONS")
+    return response
 warnings.filterwarnings("ignore")
 
 def get_lat_lon_if_india(location):
@@ -57,42 +62,43 @@ def get_aqi_category(value):
 
 @app.route("/predict", methods=["POST", "OPTIONS"])
 def predict():
+    # ✅ Handle CORS Preflight (OPTIONS request)
+    if request.method == "OPTIONS":
+        response = jsonify({"message": "CORS preflight successful"})
+        response.headers.add("Access-Control-Allow-Origin", "*")
+        response.headers.add("Access-Control-Allow-Headers", "Content-Type, Authorization")
+        response.headers.add("Access-Control-Allow-Methods", "POST, OPTIONS")
+        return response, 200
+
+    # ✅ Process the actual POST request
     data = request.json
     print("Received Data:", data)  # Debugging Line
     location = data.get("location")
     pollut = data.get("pollutant", "").strip().upper()
 
-    if request.method == "OPTIONS":
-        # Handle the preflight request
-        response = jsonify({'message': 'CORS preflight passed'})
-        response.headers.add("Access-Control-Allow-Origin", "*")  # <-- You can lock to your frontend URL
-        response.headers.add("Access-Control-Allow-Headers", "Content-Type,Authorization")
-        response.headers.add("Access-Control-Allow-Methods", "POST,OPTIONS")
-        return response, 200
-    # Main POST request handler
-    
-    
-    
+    if not location or not pollut:
+        return jsonify({"error": "Missing required fields"}), 400
+
     coordinates = get_lat_lon_if_india(location)
     if not coordinates:
         return jsonify({"error": "Location not found in India"}), 400
-    
+
     if pollut not in pollutid:
         return jsonify({"error": "Invalid pollutant"}), 400
-    
+
     pollutant_id = pollutid[pollut]
     locat = [coordinates + [pollutant_id]]
-    
+
     feature_names = ["latitude", "longitude", "pollutant_id"]
     sample_test_df = pd.DataFrame(locat, columns=feature_names)
-    
-    # Scale latitude & longitude
+
+    # ✅ Scale latitude & longitude
     scaled_values = sc.transform(sample_test_df.iloc[:, :2])
     scaled_df = pd.DataFrame(scaled_values, columns=["latitude", "longitude"])
     scaled_df["pollutant_id"] = sample_test_df["pollutant_id"].values
-    
-    # Predict AQI levels
-    prediction = model.predict(scaled_df)#.reshape(1, -1)
+
+    # ✅ Predict AQI levels
+    prediction = model.predict(scaled_df)
     att = ["Minimum Pollutant level", "Maximum Pollutant level", "Average Pollutant level"]
     predicted_df = pd.DataFrame(prediction, columns=att)
 
@@ -100,17 +106,17 @@ def predict():
     max_pollutant = predicted_df["Maximum Pollutant level"].iloc[0]
     avg_pollutant = predicted_df["Average Pollutant level"].iloc[0]
 
-    # Get AQI category for each level
+    # ✅ Get AQI category for each level
     min_status = get_aqi_category(min_pollutant)
     max_status = get_aqi_category(max_pollutant)
     avg_status = get_aqi_category(avg_pollutant)
 
-    # Determine overall status: prioritize the worst condition
-    # Find the worst (highest index) category
+    # ✅ Determine overall status
     status_priority = {"Healthy": 0, "Satisfactory": 1, "Unhealthy": 2, "Very Unhealthy": 3, "Hazardous": 4}
     worst_status = max([min_status, max_status, avg_status], key=lambda s: status_priority[s])
 
-    return jsonify({
+    # ✅ Properly Set Response Headers
+    response = jsonify({
         "Minimum Pollutant Level": format(min_pollutant, ".2f"),
         "Maximum Pollutant Level": format(max_pollutant, ".2f"),
         "Average Pollutant Level": format(avg_pollutant, ".2f"),
@@ -119,6 +125,8 @@ def predict():
         "Average Level AQI Status": avg_status,
         "Overall AQI Status": worst_status
     })
+    response.headers.add("Access-Control-Allow-Origin", "*")  # ✅ CORS Header for POST response
+    return response, 200
 
 # Optional: root health check
 @app.route("/", methods=["GET"])
