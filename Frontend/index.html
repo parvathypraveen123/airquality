@@ -4,11 +4,223 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>AirScapes</title>
-    <link rel="icon" type="image/png"  href="favicon-16x16.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="favicon-192x192.png">
     <link rel="icon" type="image/png" sizes="32x32" href="favicon-32x32.png">
     <link rel="apple-touch-icon" sizes="180x180" href="apple-touch-icon.png">
+    
+
     <link href="styles.css" rel="stylesheet">
-    <link rel="stylesheet" href="styles.css">
+    <style>
+        .auth-container {
+            display: flex;
+            width: 100%;
+            max-width: 900px;
+            justify-content: center;
+            margin-bottom: 3rem;
+            gap: 2rem;
+        }
+
+        .auth-card {
+            background-color: white;
+            border-radius: 15px;
+            box-shadow: 0 5px 20px var(--shadow-color);
+            width: 100%;
+            max-width: 400px;
+            padding: 2.5rem;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            animation: slideUp 1s ease-in-out;
+        }
+
+        .auth-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 30px var(--shadow-color);
+        }
+
+
+        .input-field {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            background-color: #f5f5f5;
+            font-size: 1rem;
+            color: #444;
+            transition: border-color 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .input-field:focus {
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.2);
+            outline: none;
+        }
+
+        .input-field::placeholder {
+            color: #999;
+        }
+
+        .btn {
+            width: 100%;
+            margin-top: 1rem;
+        }
+
+
+        .auth-toggle {
+            text-align: center;
+            margin-top: 1.5rem;
+            font-size: 0.9rem;
+        }
+
+        .auth-toggle a {
+            color: var(--primary-color);
+            text-decoration: none;
+            font-weight: 600;
+            transition: color 0.3s ease;
+        }
+
+        .auth-toggle a:hover {
+            color: var(--secondary-color);
+        }
+
+        .divider {
+            display: flex;
+            align-items: center;
+            text-align: center;
+            margin: 1.5rem 0;
+            color: #999;
+        }
+
+        .divider::before,
+        .divider::after {
+            content: '';
+            flex: 1;
+            border-bottom: 1px solid #eee;
+        }
+
+        .divider::before {
+            margin-right: 1rem;
+        }
+
+        .divider::after {
+            margin-left: 1rem;
+        }
+
+        .auth-header {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+
+        .auth-header h2 {
+            color: var(--primary-color);
+            font-size: 1.8rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .auth-header p {
+            color: #777;
+            font-size: 0.95rem;
+        }
+
+        .password-toggle {
+            position: relative;
+        }
+
+        .password-toggle i {
+            position: absolute;
+            right: 12px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #999;
+            cursor: pointer;
+            padding: 5px;
+        }
+
+        
+
+        .terms {
+            font-size: 0.85rem;
+            color: #777;
+            margin-top: 1rem;
+            text-align: center;
+        }
+
+        .terms a {
+            color: var(--primary-color);
+            text-decoration: none;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        @keyframes slideUp {
+            from { transform: translateY(30px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+
+        footer {
+            background-color: #333;
+            color: #fff;
+            padding: 2rem;
+            text-align: center;
+            margin-top: auto;
+        }
+
+        .footer-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .footer-links {
+            display: flex;
+            justify-content: center;
+            margin: 1.5rem 0;
+        }
+
+        .footer-links a {
+            color: #fff;
+            margin: 0 15px;
+            text-decoration: none;
+            transition: color 0.3s ease;
+        }
+
+        .footer-links a:hover {
+            color: var(--secondary-color);
+        }
+
+        @media (max-width: 768px) {
+            header {
+                padding: 1.5rem 1rem;
+            }
+
+            h1 {
+                font-size: 2rem;
+            }
+
+            .tagline {
+                font-size: 1rem;
+            }
+
+            main {
+                padding: 2rem 1rem;
+            }
+
+            .auth-container {
+                flex-direction: column;
+                align-items: center;
+            }
+
+            .auth-card {
+                margin-bottom: 2rem;
+                padding: 1.5rem;
+                max-width: 100%;
+            }
+        }
+    </style>
+    <script type="module" src="authentication.js" defer></script>
 </head>
 <body>
     <div class="particles-container" id="particles-container"></div>
@@ -19,128 +231,58 @@
     </header>
 
     <main>
-        <div class="prediction-card">
-            <h2>Predict Air Quality</h2>
-            <form id="prediction-form">
-                <div class="form-group">
-                    <label for="location">Location</label>
-                    <input 
-                        type="text" 
-                        id="location" 
-                        name="location" 
-                        placeholder="Enter your location (e.g., City, State)"
-                        required
-                        class="location-input"
-                    >
+        <div class="auth-container">
+            <!-- Login Card -->
+            <div class="auth-card">
+                <div class="auth-header">
+                    <h2>Welcome Back</h2>
+                    <p>Sign in to access your air quality forecasts</p>
                 </div>
-                <div class="form-group">
-                    <label for="pollutant">Pollutant of Interest</label>
-                    <select id="pollutant" required>
-                        <option value="" disabled selected>Select pollutant</option>
-                        <option value="pm25">PM2.5 (Fine Particulate Matter)</option>
-                        <option value="pm10">PM10 (Coarse Particulate Matter)</option>
-                        <option value="o3">O₃ (Ozone)</option>
-                        <option value="no2">NO₂ (Nitrogen Dioxide)</option>
-                        <option value="so2">SO₂ (Sulfur Dioxide)</option>
-                        <option value="co">CO (Carbon Monoxide)</option>
-                    </select>
-                </div>
-                <button type="submit" class="btn">
-                    <i class="fas fa-chart-line"></i> Predict Air Quality
-                </button>
-            </form>
-        </div>
+                <form id="login-form">
+                    <div class="form-group">
+                        <label for="login-email">Email Address</label>
+                        <input type="email" id="login-email" class="input-field" placeholder="Enter your email" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="login-password">Password</label>
+                        <div class="password-toggle">
+                            <input type="password" id="login-password" class="input-field" placeholder="Enter your password" required>
+                            <i class="fas fa-eye"></i>
+                        </div>
+                    </div>
+                    <div class="terms">
+                        <p>By signing in, you agree to our <a href="#">Terms of Service</a> and <a href="#">Privacy Policy</a></p>
+                    </div>
+                    <button type="submit" class="btn">
+                        <i class="fas fa-sign-in-alt"></i> Login
+                    </button>
+                </form>
 
-        <!-- Rest of the HTML remains the same -->
-        <div class="result-section" id="result-section">
-            <h2>Your Prediction Result</h2>
-            <div class="result-card">
-        
-                <p>Air Quality Index for <span id="location-display">selected location</span>:</p>
-        
-                <!-- AQI Values -->
-                <div class="aqi-values">
-                    <p>Minimum AQI: <span class="aqi-value" id="min-aqi">-</span> <small>(<span id="min-status">-</span>)</small></p>
-                    <p>Maximum AQI: <span class="aqi-value" id="max-aqi">-</span> <small>(<span id="max-status">-</span>)</small></p>
-                    <p>Average AQI: <span class="aqi-value" id="avg-aqi">-</span> <small>(<span id="avg-status">-</span>)</small></p>
-                </div>
-        
-                <!-- Description for Average AQI -->
-                <p class="aqi-description" id="aqi-description">Good - Air quality is satisfactory, and air pollution poses little or no risk.</p>
-                
-                <!-- Scale Bar -->
-                <div class="scale-container">
-                    <div class="scale-marker" id="scale-marker"></div>
-                </div>
-                
-                <!-- Recommendations -->
-                <div class="recommendation-section">
-                    <p class="recommendation-title">Recommendations:</p>
-                    <ul id="recommendations">
-                        <li>You can enjoy outdoor activities.</li>
-                    </ul>
-                </div>
-                
-            </div>
-        </div>
-        
-
-        <div class="info-card">
-            <h2 class="info-title">Understanding Air Pollutants</h2>
-            <p>Air quality is affected by various pollutants, each with different sources and health impacts. Below are the major pollutants we monitor:</p>
-            
-            <div class="pollutant-grid">
-                <div class="pollutant-card">
-                    <h3>PM2.5</h3>
-                    <p>Fine particulate matter smaller than 2.5 micrometers. These tiny particles can penetrate deep into the lungs and even enter the bloodstream, causing respiratory and cardiovascular issues.</p>
-                </div>
-                
-                <div class="pollutant-card">
-                    <h3>PM10</h3>
-                    <p>Coarse particulate matter between 2.5 and 10 micrometers. These particles can cause irritation to the eyes, nose, and throat, and may worsen existing respiratory conditions.</p>
-                </div>
-                
-                <div class="pollutant-card">
-                    <h3>Ozone (O₃)</h3>
-                    <p>Ground-level ozone forms when pollutants from vehicles and industry react in sunlight. It can trigger asthma attacks, reduce lung function, and cause respiratory inflammation.</p>
-                </div>
-                
-                <div class="pollutant-card">
-                    <h3>Nitrogen Dioxide (NO₂)</h3>
-                    <p>A gas produced during combustion processes, especially in vehicles and power plants. It can irritate airways and increase susceptibility to respiratory infections.</p>
-                </div>
-                
-                <div class="pollutant-card">
-                    <h3>Sulfur Dioxide (SO₂)</h3>
-                    <p>A gas produced from burning fossil fuels containing sulfur. It can cause respiratory symptoms and make breathing difficult for those with asthma.</p>
-                </div>
-                
-                <div class="pollutant-card">
-                    <h3>Carbon Monoxide (CO)</h3>
-                    <p>A colorless, odorless gas produced by incomplete combustion. It reduces oxygen delivery to the body's organs and can be fatal at high concentrations.</p>
+                <div class="auth-toggle">
+                    <p>Don't have an account? <a href="#" id="show-signup">Sign Up</a></p>
                 </div>
             </div>
-        </div>
-    </main>
 
-    <footer>
-        <div class="footer-content">
-            <div class="social-icons">
-                <a href="#"><i class="fab fa-facebook"></i></a>
-                <a href="#"><i class="fab fa-twitter"></i></a>
-                <a href="#"><i class="fab fa-instagram"></i></a>
-                <a href="#"><i class="fab fa-linkedin"></i></a>
-            </div>
-            <div class="footer-links">
-                <a href="#">About Us</a>
-                <a href="#">Privacy Policy</a>
-                <a href="#">Terms of Service</a>
-                <a href="#">Contact Us</a>
-            </div>
-            <p>© 2025 Air Quality Prediction. All rights reserved.</p>
-        </div>
-    </footer>
-
-    <script src="script.js"></script>
-</body>
-</html>
+            <!-- Sign Up Card -->
+            <div class="auth-card" style="display: none;" id="signup-card">
+                <div class="auth-header">
+                    <h2>Create Account</h2>
+                    <p>Join us for personalized air quality alerts</p>
+                </div>
+                <form id="signup-form">
+                    <div class="form-group">
+                        <label for="fullname">Full Name</label>
+                        <input type="text" id="fullname" class="input-field" placeholder="Enter your full name" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="signup-email">Email Address</label>
+                        <input type="email" id="signup-email" class="input-field" placeholder="Enter your email" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="signup-password">Password</label>
+                        <div class="password-toggle">
+                            <input type="password" id="signup-password" class="input-field" placeholder="Create a password" required>
+                            <i class="fas fa-eye"></i>
+                        </div>
+                    </div>
+                    
