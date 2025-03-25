@@ -105,7 +105,7 @@ loginForm.addEventListener("submit", (e) => {
       alert(`Welcome back, ${user.email}!`);
 
       // Redirect or show main content
-      window.location.href = "index.html"; // You can change this to your page
+      window.location.href = "home.html"; // You can change this to your page
     })
     .catch((error) => {
       console.error("Login error:", error);
@@ -153,7 +153,7 @@ googleSigninBtn.addEventListener("click", (e) => {
       alert(`Welcome, ${user.displayName || user.email}!`);
 
       // Redirect to dashboard or another page
-      window.location.href = "index.html";
+      window.location.href = "home.html";
     })
     .catch((error) => {
       console.error("Google Sign-In error:", error);
