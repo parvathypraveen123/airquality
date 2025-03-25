@@ -56,8 +56,9 @@ def get_aqi_category(value):
 
 @app.route("/predict", methods=["POST", "OPTIONS"])
 def predict():
+    # ✅ Handle CORS Preflight (OPTIONS request)
     if request.method == "OPTIONS":
-        response = jsonify({'message': 'CORS preflight successful'})
+        response = jsonify({"message": "CORS preflight successful"})
         response.headers.add("Access-Control-Allow-Origin", "*")
         response.headers.add("Access-Control-Allow-Headers", "Content-Type, Authorization")
         response.headers.add("Access-Control-Allow-Methods", "POST, OPTIONS")
