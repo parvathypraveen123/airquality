@@ -9,7 +9,8 @@ import os
 
 
 app = Flask(__name__)
-CORS(app, resources={r"/*": {"origins": "*"}})  # <-- You can limit to localhost in production
+CORS(app, resources={r"/*": {"origins": ["https://www.airscapes.me", "https://airscapes.me"]}}, supports_credentials=True)
+
 def after_request(response):
     response.headers.add("Access-Control-Allow-Origin", "*")
     response.headers.add("Access-Control-Allow-Headers", "Content-Type, Authorization")
