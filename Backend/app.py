@@ -125,6 +125,8 @@ def predict():
         "Average Level AQI Status": avg_status,
         "Overall AQI Status": worst_status
     })
+    response.headers.add("Access-Control-Allow-Origin", "*")  # ✅ CORS Header for POST response
+    return response, 200
 
 # Optional: root health check
 @app.route("/", methods=["GET"])
