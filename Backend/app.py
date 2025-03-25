@@ -10,7 +10,6 @@ import os
 
 app = Flask(__name__)
 CORS(app, resources={r"/*": {"origins": "*"}})  # <-- You can limit to localhost in production
-#CORS(app)  # Allow all origins
 warnings.filterwarnings("ignore")
 
 def get_lat_lon_if_india(location):
@@ -56,11 +55,9 @@ def get_aqi_category(value):
         return "Hazardous"
 
 @app.route("/predict", methods=["POST", "OPTIONS"])
-#@app.route("/predict", methods=["POST"])
 def predict():
     data = request.json
     print("Received Data:", data)  # Debugging Line
-    data = request.json
     location = data.get("location")
     pollut = data.get("pollutant", "").strip().upper()
 
@@ -73,7 +70,7 @@ def predict():
         return response, 200
     # Main POST request handler
     
-    #pollut = data.get("pollutant").strip().upper()
+    
     
     coordinates = get_lat_lon_if_india(location)
     if not coordinates:
@@ -108,11 +105,7 @@ def predict():
     avg_status = get_aqi_category(avg_pollutant)
 
     # Determine overall status: prioritize the worst condition
-    #status_priority = ["Healthy", "Satisfactory", "Unhealthy", "Very Unhealthy", "Hazardous"]
-    #statuses = [min_status, max_status, avg_status]
-    
     # Find the worst (highest index) category
-    #worst_status = max(statuses, key=lambda x: status_priority.index(x))
     status_priority = {"Healthy": 0, "Satisfactory": 1, "Unhealthy": 2, "Very Unhealthy": 3, "Hazardous": 4}
     worst_status = max([min_status, max_status, avg_status], key=lambda s: status_priority[s])
 
@@ -125,9 +118,6 @@ def predict():
         "Average Level AQI Status": avg_status,
         "Overall AQI Status": worst_status
     })
-# Add CORS headers again just in case
-    #response.headers.add("Access-Control-Allow-Origin", "*")
-    #return response, 200
 
 # Optional: root health check
 @app.route("/", methods=["GET"])
@@ -139,6 +129,5 @@ if __name__ == "__main__":
     from os import environ
     port = int(os.environ.get("PORT", 5000))  # Default to 5000 if PORT is not set
     app.run(host="0.0.0.0", port=port)
-    #app.run(debug=True)  
 
 warnings.filterwarnings("ignore")
