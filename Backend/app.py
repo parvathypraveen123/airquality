@@ -9,7 +9,8 @@ import os
 
 
 app = Flask(__name__)
-CORS(app, resources={r"/*": {"origins": "*"}})  # <-- You can limit to localhost in production
+#CORS(app, resources={r"/*": {"origins": "*"}})  # <-- You can limit to localhost in production
+CORS(app, resources={r"/*": {"origins": "https://www.airscapes.me"}})
 warnings.filterwarnings("ignore")
 
 def get_lat_lon_if_india(location):
