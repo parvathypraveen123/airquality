@@ -62,7 +62,7 @@ document.getElementById('prediction-form').addEventListener('submit', function(e
     const mappedPollutant = pollutantMapping[pollutant.toLowerCase()];
 
   
-    fetch('https://airscape-bbt2.onrender.com', {
+    fetch('https://airscape-bbt2.onrender.com/predict', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
