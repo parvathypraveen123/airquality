@@ -5,30 +5,21 @@ import pandas as pd
 import joblib
 from flask_cors import CORS
 import warnings
-import os
 
 app = Flask(__name__)
-
-# ✅ Allow frontend on both production & local dev
-CORS(app, resources={r"/*": {"origins": ["https://www.airscapes.me", "http://127.0.0.1:5500"]}}, supports_credentials=True)
-
-@app.after_request
-def after_request(response):
-    response.headers.add("Access-Control-Allow-Origin", "https://www.airscapes.me")
-    response.headers.add("Access-Control-Allow-Headers", "Content-Type, Authorization")
-    response.headers.add("Access-Control-Allow-Methods", "GET, POST, OPTIONS")
-    return response
+CORS(app, resources={r"/*": {"origins": "*"}})  # <-- You can limit to localhost in prod
 
 warnings.filterwarnings("ignore")
 
+# Geolocation function
 def get_lat_lon_if_india(location):
     geolocator = Nominatim(user_agent="geo_locator")
     location_data = geolocator.geocode(location, exactly_one=True, country_codes="IN")  
-    
     if location_data:
         return [location_data.latitude, location_data.longitude]
     return None
 
+# Pollutant mapping
 pollutid = {
     'CO': 0, 'CARBON MONOXIDE': 0,
     'NH3': 1, 'AMMONIA': 1,
@@ -39,15 +30,11 @@ pollutid = {
     'SO2': 6, 'SULFUR DIOXIDE': 6
 }
 
-# ✅ Load the trained model and scaler
-try:
-    model = joblib.load("air_quality_model.pkl")
-    sc = joblib.load("scaler.pkl")
-except Exception as e:
-    print(f"Error loading model: {e}")
-    model = None
-    sc = None
+# Load trained model and scaler
+model = joblib.load("air_quality_model.pkl")
+sc = joblib.load("scaler.pkl")
 
+# AQI categorization
 def get_aqi_category(value):
     if value <= 50:
         return "Healthy"
@@ -60,25 +47,21 @@ def get_aqi_category(value):
     else:
         return "Hazardous"
 
+# Preflight OPTIONS handler + main POST predict route
 @app.route("/predict", methods=["POST", "OPTIONS"])
 def predict():
-    # ✅ Handle CORS Preflight (OPTIONS request)
     if request.method == "OPTIONS":
-        response = jsonify({"message": "CORS preflight successful"})
-        response.headers.add("Access-Control-Allow-Origin", "https://www.airscapes.me")
-        response.headers.add("Access-Control-Allow-Headers", "Content-Type, Authorization")
-        response.headers.add("Access-Control-Allow-Methods", "POST, OPTIONS")
+        # Handle the preflight request
+        response = jsonify({'message': 'CORS preflight passed'})
+        response.headers.add("Access-Control-Allow-Origin", "*")  # <-- You can lock to your frontend URL
+        response.headers.add("Access-Control-Allow-Headers", "Content-Type,Authorization")
+        response.headers.add("Access-Control-Allow-Methods", "POST,OPTIONS")
         return response, 200
 
-    # ✅ Process the actual POST request
+    # Main POST request handler
     data = request.json
-    print("Received Data:", data)
-
     location = data.get("location")
-    pollut = data.get("pollutant", "").strip().upper()
-
-    if not location or not pollut:
-        return jsonify({"error": "Missing required fields"}), 400
+    pollut = data.get("pollutant").strip().upper()
 
     coordinates = get_lat_lon_if_india(location)
     if not coordinates:
@@ -93,55 +76,48 @@ def predict():
     feature_names = ["latitude", "longitude", "pollutant_id"]
     sample_test_df = pd.DataFrame(locat, columns=feature_names)
 
-    # ✅ Ensure model & scaler are loaded before predicting
-    if model is None or sc is None:
-        return jsonify({"error": "Model not loaded properly"}), 500
+    # Scale latitude & longitude
+    scaled_values = sc.transform(sample_test_df.iloc[:, :2])
+    scaled_df = pd.DataFrame(scaled_values, columns=["latitude", "longitude"])
+    scaled_df["pollutant_id"] = sample_test_df["pollutant_id"].values
 
-    try:
-        # ✅ Scale latitude & longitude
-        scaled_values = sc.transform(sample_test_df.iloc[:, :2])
-        scaled_df = pd.DataFrame(scaled_values, columns=["latitude", "longitude"])
-        scaled_df["pollutant_id"] = sample_test_df["pollutant_id"].values
+    # Predict AQI levels
+    prediction = model.predict(scaled_df).reshape(1, -1)
+    att = ["Minimum Pollutant level", "Maximum Pollutant level", "Average Pollutant level"]
+    predicted_df = pd.DataFrame(prediction, columns=att)
 
-        # ✅ Predict AQI levels
-        prediction = model.predict(scaled_df)
-        att = ["Minimum Pollutant level", "Maximum Pollutant level", "Average Pollutant level"]
-        predicted_df = pd.DataFrame(prediction, columns=att)
+    min_pollutant = predicted_df["Minimum Pollutant level"].iloc[0]
+    max_pollutant = predicted_df["Maximum Pollutant level"].iloc[0]
+    avg_pollutant = predicted_df["Average Pollutant level"].iloc[0]
 
-        min_pollutant = predicted_df["Minimum Pollutant level"].iloc[0]
-        max_pollutant = predicted_df["Maximum Pollutant level"].iloc[0]
-        avg_pollutant = predicted_df["Average Pollutant level"].iloc[0]
+    # Get AQI category for each level
+    min_status = get_aqi_category(min_pollutant)
+    max_status = get_aqi_category(max_pollutant)
+    avg_status = get_aqi_category(avg_pollutant)
 
-        min_status = get_aqi_category(min_pollutant)
-        max_status = get_aqi_category(max_pollutant)
-        avg_status = get_aqi_category(avg_pollutant)
+    # Determine overall status
+    status_priority = ["Healthy", "Satisfactory", "Unhealthy", "Very Unhealthy", "Hazardous"]
+    statuses = [min_status, max_status, avg_status]
+    worst_status = max(statuses, key=lambda x: status_priority.index(x))
 
-        status_priority = {"Healthy": 0, "Satisfactory": 1, "Unhealthy": 2, "Very Unhealthy": 3, "Hazardous": 4}
-        worst_status = max([min_status, max_status, avg_status], key=lambda s: status_priority[s])
+    response = jsonify({
+        "Minimum Pollutant Level": format(min_pollutant, ".2f"),
+        "Maximum Pollutant Level": format(max_pollutant, ".2f"),
+        "Average Pollutant Level": format(avg_pollutant, ".2f"),
+        "Minimum Level AQI Status": min_status,
+        "Maximum Level AQI Status": max_status,
+        "Average Level AQI Status": avg_status,
+        "Overall AQI Status": worst_status
+    })
 
-        response = jsonify({
-            "Minimum Pollutant Level": format(min_pollutant, ".2f"),
-            "Maximum Pollutant Level": format(max_pollutant, ".2f"),
-            "Average Pollutant Level": format(avg_pollutant, ".2f"),
-            "Minimum Level AQI Status": min_status,
-            "Maximum Level AQI Status": max_status,
-            "Average Level AQI Status": avg_status,
-            "Overall AQI Status": worst_status
-        })
-        response.headers.add("Access-Control-Allow-Origin", "https://www.airscapes.me")
-        return response, 200
+    # Add CORS headers again just in case
+    response.headers.add("Access-Control-Allow-Origin", "*")
+    return response, 200
 
-    except Exception as e:
-        print(f"Error during prediction: {e}")
-        return jsonify({"error": "Server error during prediction"}), 500
-
+# Optional: root health check
 @app.route("/", methods=["GET"])
 def home():
     return jsonify({"message": "Air Quality Prediction API is live!"})
 
 if __name__ == "__main__":
-    from os import environ
-    port = int(os.environ.get("PORT", 5000))  
-    app.run(host="0.0.0.0", port=port)
-
-warnings.filterwarnings("ignore")
+    app.run(debug=True, host="0.0.0.0", port=5000)
